@@ -1,0 +1,42 @@
+{
+  "collections": {
+    "cases": {
+      "description": "Stores the knowledge event cases.",
+      "fields": {
+        "question": { "type": "string" },
+        "photoData": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "timestamp" },
+        "status": { "type": "string" }
+      },
+      "rules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "false"
+      },
+      "subcollections": {
+        "responses": {
+          "description": "Stores expert responses to the case.",
+          "fields": {
+            "participantId": { "type": "string" },
+            "interpretation": { "type": "string" },
+            "basis": { "type": "string" },
+            "probability": { "type": "string" },
+            "evidenceRequest": { "type": "string" },
+            "newInterpretation": { "type": "string" },
+            "newProbability": { "type": "string" },
+            "whyChange": { "type": "string" },
+            "phase": { "type": "string" }
+          },
+          "rules": {
+            "read": "true",
+            "create": "true",
+            "update": "true",
+            "delete": "false"
+          }
+        }
+      }
+    }
+  }
+}
