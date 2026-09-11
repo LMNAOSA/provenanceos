@@ -41,10 +41,20 @@ function NarrativeBeat({
 
 export default function App() {
   const containerRef = useRef(null);
+  const { scrollY } = useScroll();
+  const logoOpacity = useTransform(scrollY, [100, 300], [1, 0.2]);
 
   return (
     <div ref={containerRef} className="bg-mineral selection:bg-neutral-800 selection:text-white">
       
+      {/* GLOBAL COMPANY LOGO */}
+      <motion.div 
+        style={{ opacity: logoOpacity }}
+        className="fixed top-8 left-8 md:top-12 md:left-12 z-50 pointer-events-none"
+      >
+        <img src="/Master%20Logo%20File%20Dark_light.svg" alt="Australian Provenance Project" className="h-14 md:h-18 w-auto" />
+      </motion.div>
+
       {/* 01 PROBLEM */}
       <NarrativeBeat 
         headline="KNOWLEDGE LIVES IN PEOPLE." 
@@ -114,11 +124,32 @@ export default function App() {
       </div>
 
       {/* 06 THE VISION */}
-      <NarrativeBeat 
-        headline="An oracle of knowledge." 
-        supporting="Not an infallible source of truth, but an aspirational interface. Its authority comes from traceability—showing who knows, what they know, and what remains unknown." 
-        small={true}
-      />
+      <div className="min-h-screen flex items-center justify-center px-8 md:px-24 snap-center relative mineral-grain">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-20%" }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl w-full flex flex-col items-start"
+        >
+          <div className="mb-12">
+            <h3 className="font-mono text-sm tracking-widest text-mineral-sec uppercase mb-6">Introducing</h3>
+            <img src="/ProveOS%20Logo%20File%20Dark_light.svg" alt="PROVENANCEOS™" className="h-8 md:h-12 w-auto" />
+          </div>
+          <h2 className="font-display text-4xl md:text-6xl text-mineral-sec leading-tight tracking-tight">
+            The oracle of knowledge.
+          </h2>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, delay: 0.8 }}
+            className="font-sans mt-8 text-xl text-mineral-sec"
+          >
+            Not an infallible source of truth, but an aspirational interface. Its authority comes from traceability—showing who knows, what they know, and what remains unknown.
+          </motion.p>
+        </motion.div>
+      </div>
 
       {/* 07 WHY ANDAMOOKA */}
       <NarrativeBeat 
