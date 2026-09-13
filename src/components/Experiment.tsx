@@ -112,7 +112,11 @@ export function Experiment() {
     const file = e.target.files?.[0];
     if (file) {
       const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      
       img.onload = () => {
+        URL.revokeObjectURL(objectUrl); // Clean up memory
+        
         const canvas = document.createElement('canvas');
         const MAX_DIMENSION = 800;
         let width = img.width;
@@ -136,11 +140,12 @@ export function Experiment() {
         setUploadedPhoto(dataUrl);
       };
       
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        img.src = reader.result as string;
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        console.error("Failed to load image for compression");
       };
-      reader.readAsDataURL(file);
+
+      img.src = objectUrl;
     }
   };
 
