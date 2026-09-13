@@ -359,7 +359,7 @@ export function Experiment({ onExit }: { onExit?: () => void }) {
     <div className="min-h-screen bg-instrument text-instrument-text flex flex-col md:flex-row relative">
       
       {/* LEFT COLUMN: VISUAL SPECIMEN */}
-      <div className="md:w-1/2 h-[50vh] md:h-screen sticky top-0 border-b md:border-b-0 md:border-r border-neutral-800 p-8 flex flex-col">
+      <div className="md:w-1/2 h-[60vh] md:h-screen relative md:sticky md:top-0 border-b md:border-b-0 md:border-r border-neutral-800 p-4 md:p-8 flex flex-col bg-instrument z-10">
         <div className="flex-1 relative">
           <div className="absolute inset-0 bg-neutral-900 overflow-hidden flex items-center justify-center">
              
@@ -399,7 +399,7 @@ export function Experiment({ onExit }: { onExit?: () => void }) {
         </div>
         
         {/* XRF HUD */}
-        <div className="h-32 mt-8 flex flex-col justify-end">
+        <div className="mt-4 md:mt-8 min-h-24 md:h-32 flex flex-col justify-end shrink-0">
           <div className="font-mono text-xs uppercase tracking-widest text-neutral-500 mb-2">EVIDENCE / MEASUREMENTS</div>
           <AnimatePresence mode="wait">
             {!dbState?.xrfData && !matXrfPhoto ? (
