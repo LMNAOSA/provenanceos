@@ -13,7 +13,7 @@ type ThreadMessage = {
   requestXrf?: boolean;
 };
 
-export function Experiment() {
+export function Experiment({ onExit }: { onExit?: () => void }) {
   const [participant, setParticipant] = useState<keyof typeof EXPERT_RESPONSES | null>(null);
   
   // DB State
@@ -37,6 +37,7 @@ export function Experiment() {
   const [requestXrf, setRequestXrf] = useState(false);
   const [finalResponse, setFinalResponse] = useState(''); // Final interpretation
   const [probability, setProbability] = useState('');
+  const [hoveredRole, setHoveredRole] = useState<keyof typeof EXPERT_RESPONSES | null>(null);
 
   // Sync with Firestore
   useEffect(() => {
@@ -239,28 +240,110 @@ export function Experiment() {
 
   if (!participant) {
     return (
-      <div className="min-h-screen bg-instrument text-instrument-text flex flex-col justify-center px-8 md:px-24">
-        <div className="max-w-3xl flex justify-between items-end mb-16">
-          <h2 className="font-display text-4xl md:text-6xl tracking-tight">WHO ARE YOU ENTERING AS?</h2>
-          {dbState?.isCreated && (
-            <button onClick={handleResetExperiment} className="font-mono text-xs uppercase tracking-widest text-neutral-500 hover:text-white pb-2 border-b border-transparent hover:border-white transition-all">
-              RESET EXPERIMENT
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="min-h-screen bg-mineral text-mineral-text flex flex-col relative overflow-hidden selection:bg-neutral-800 selection:text-white transition-colors duration-1000"
+        style={{
+          backgroundColor: hoveredRole === 'nigel' || hoveredRole === 'danielle' ? '#0A0A0A' : '#E7E1D5'
+        }}
+      >
+        <div className="relative z-10 flex-1 flex flex-col justify-center items-center px-8 md:px-24">
+          <h2 className={`font-mono text-xs uppercase tracking-widest mb-16 transition-colors duration-700 ${hoveredRole && hoveredRole !== 'mat' ? 'text-neutral-500' : 'text-neutral-500'}`}>
+            Select Viewpoint Lens
+          </h2>
+          
+          <div className="flex flex-col md:flex-row gap-12 md:gap-24 items-center justify-center w-full max-w-6xl">
+            {/* Originator */}
+            <button 
+              onMouseEnter={() => setHoveredRole('mat')}
+              onMouseLeave={() => setHoveredRole(null)}
+              onClick={() => setParticipant('mat')}
+              className={`group text-center md:text-right flex flex-col transition-all duration-700 flex-1 ${hoveredRole && hoveredRole !== 'mat' ? 'opacity-20 blur-sm' : 'opacity-100'}`}
+            >
+              <span className={`font-display text-5xl md:text-7xl transition-colors duration-700 ${hoveredRole === 'mat' ? 'text-black' : (hoveredRole ? 'text-white' : 'text-neutral-800')}`}>Matt Kathagen</span>
+              <span className={`font-mono text-sm uppercase tracking-widest mt-4 transition-colors duration-700 ${hoveredRole === 'mat' ? 'text-neutral-600' : 'text-neutral-400'}`}>Field Knowledge</span>
             </button>
+
+            {/* The Object / Divider */}
+            <div className="w-[1px] h-32 bg-neutral-400/30 hidden md:block transition-opacity duration-700" style={{ opacity: hoveredRole ? 0 : 1 }} />
+
+            {/* Evaluators */}
+            <div className="flex flex-col gap-12 flex-1 items-center md:items-start">
+              <button 
+                onMouseEnter={() => setHoveredRole('nigel')}
+                onMouseLeave={() => setHoveredRole(null)}
+                onClick={() => setParticipant('nigel')}
+                className={`group text-center md:text-left flex flex-col transition-all duration-700 ${hoveredRole && hoveredRole !== 'nigel' ? 'opacity-20 blur-sm' : 'opacity-100'}`}
+              >
+                <span className={`font-display text-4xl md:text-5xl transition-colors duration-700 ${hoveredRole === 'nigel' ? 'text-cyan-400' : (hoveredRole ? 'text-white' : 'text-neutral-800')}`}>Nigel Spooner</span>
+                <span className={`font-mono text-sm uppercase tracking-widest mt-2 transition-colors duration-700 ${hoveredRole === 'nigel' ? 'text-cyan-600/50' : 'text-neutral-400'}`}>Radiation Physics</span>
+              </button>
+
+              <button 
+                onMouseEnter={() => setHoveredRole('danielle')}
+                onMouseLeave={() => setHoveredRole(null)}
+                onClick={() => setParticipant('danielle')}
+                className={`group text-center md:text-left flex flex-col transition-all duration-700 ${hoveredRole && hoveredRole !== 'danielle' ? 'opacity-20 blur-sm' : 'opacity-100'}`}
+              >
+                <span className={`font-display text-4xl md:text-5xl transition-colors duration-700 ${hoveredRole === 'danielle' ? 'text-cyan-400' : (hoveredRole ? 'text-white' : 'text-neutral-800')}`}>Danielle Questiaux</span>
+                <span className={`font-mono text-sm uppercase tracking-widest mt-2 transition-colors duration-700 ${hoveredRole === 'danielle' ? 'text-cyan-600/50' : 'text-neutral-400'}`}>Analysis & Spectroscopy</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Visual Specimen Placeholder / Indicator in Background */}
+          <div className="absolute inset-0 z-[-1] flex items-center justify-center pointer-events-none opacity-20">
+            {dbState?.photoData ? (
+               <motion.img 
+                 src={dbState.photoData} 
+                 className="w-[80vw] h-[80vh] md:w-[60vw] md:h-[60vh] object-cover blur-3xl rounded-full mix-blend-multiply"
+                 animate={{ 
+                   opacity: hoveredRole === 'mat' ? 0.4 : (hoveredRole ? 0.1 : 0.2),
+                   scale: hoveredRole === 'mat' ? 1.05 : 1
+                 }}
+                 transition={{ duration: 1.5 }}
+               />
+            ) : (
+               <motion.div 
+                 className="w-[60vw] h-[60vh] rounded-full bg-neutral-400 blur-3xl mix-blend-multiply"
+                 animate={{ 
+                   opacity: hoveredRole === 'mat' ? 0.2 : (hoveredRole ? 0.05 : 0.1),
+                   scale: hoveredRole === 'mat' ? 1.05 : 1
+                 }}
+                 transition={{ duration: 1.5 }}
+               />
+            )}
+            {/* Overlay cyan tint for UV flash when science hovered */}
+            <motion.div
+              className="absolute inset-0 bg-cyan-500 mix-blend-color blur-3xl rounded-full w-[60vw] h-[60vh]"
+              animate={{ opacity: hoveredRole === 'nigel' || hoveredRole === 'danielle' ? 0.15 : 0 }}
+              transition={{ duration: 1 }}
+            />
+          </div>
+
+          {dbState?.isCreated && (
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex gap-8">
+              <button onClick={handleResetExperiment} className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 hover:text-black pb-1 border-b border-transparent hover:border-black transition-all">
+                Reset Experiment
+              </button>
+              {onExit && (
+                <button onClick={onExit} className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 hover:text-black pb-1 border-b border-transparent hover:border-black transition-all">
+                  Exit to Briefing
+                </button>
+              )}
+            </div>
+          )}
+          {!dbState?.isCreated && onExit && (
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20">
+               <button onClick={onExit} className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 hover:text-black pb-1 border-b border-transparent hover:border-black transition-all">
+                  Exit to Briefing
+               </button>
+            </div>
           )}
         </div>
-        <div className="flex flex-col gap-12 max-w-3xl">
-          {Object.entries(EXPERT_RESPONSES).map(([key, data]) => (
-            <button 
-              key={key}
-              onClick={() => setParticipant(key as keyof typeof EXPERT_RESPONSES)}
-              className="group text-left flex flex-col items-start focus:outline-none"
-            >
-              <span className="font-display text-3xl md:text-5xl group-hover:opacity-50 transition-opacity">{data.name}</span>
-              <span className="font-mono text-sm uppercase tracking-widest text-neutral-500 mt-2">{data.role}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+      </motion.div>
     );
   }
 
